@@ -1,9 +1,9 @@
 <template>
   <div class="form-floating">
   <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
-    <option value="1" Selected>Slim</option>
-    <option value="2">Vertical</option>
-    <option value="3">Minimal</option>
+    <option value="1" @click="changeTypeOfPlayer('slim')" Selected>Slim</option>
+    <option value="2" @click="changeTypeOfPlayer('vertical')">Vertical</option>
+    <option value="3" @click="changeTypeOfPlayer('minimal')">Minimal</option>
   </select>
   <label>Seleccion el modelo del reproductor</label>
 
@@ -140,9 +140,39 @@
 
   </div>
 
-  <div v-if="codeview">
+  <div v-if="codeview && typeOfPlayer == 'slim'">
     <div class="codespace">
-      {{ player1 }}
+      &lt;iframe
+      id=&quot;player&quot;
+      title=&quot;playergenerated&quot;
+      width=&quot;700&quot;
+      height=&quot;1000&quot;
+      src=&quot;https://benevolent-cocada-9b1164.netlify.app/{{paramToPlayer}}&quot;&gt;
+      &lt;/iframe&gt;
+    </div>
+  </div>
+
+  <div v-else-if="codeview && typeOfPlayer == 'vertical'">
+    <div class="codespace">
+      &lt;iframe
+      id=&quot;player&quot;
+      title=&quot;playergenerated&quot;
+      width=&quot;1000&quot;
+      height=&quot;700&quot;
+      src=&quot;https://benevolent-cocada-9b1164.netlify.app/ruta1/{{paramToPlayer}}&quot;&gt;
+      &lt;/iframe&gt;
+    </div>
+  </div>
+
+  <div v-else-if="codeview && typeOfPlayer == 'minimal'">
+    <div class="codespace">
+      &lt;iframe
+      id=&quot;player&quot;
+      title=&quot;playergenerated&quot;
+      width=&quot;800&quot;
+      height=&quot;200&quot;
+      src=&quot;https://benevolent-cocada-9b1164.netlify.app/ruta2/{{paramToPlayer}}&quot;&gt;
+      &lt;/iframe&gt;
     </div>
   </div>
 </div>
@@ -166,14 +196,9 @@ export default {
     const defaultSlogan = ref('');
     const logoOrCover = ref(1);
     const jsonMedia = ref('');
+    const typeOfPlayer = ref('');
     const codeview = ref(false);
-    const player1 = `<iframe
-                      id="player"
-                      title="playergenerated"
-                      width="1000"
-                      height="700"
-                      src="https://benevolent-cocada-9b1164.netlify.app/ruta1">
-                      </iframe>`;
+    const paramToPlayer = ref('');
 
     // Data a enviar
     const stations = ref([]);
@@ -185,6 +210,10 @@ export default {
         currentLinkList.value.push(linkInput.value)
         linkInput.value = ''
       }
+    }
+
+    const changeTypeOfPlayer = (type) => {
+      typeOfPlayer.value = type
     }
 
     const selectingMode = (mode) => {
@@ -247,6 +276,8 @@ export default {
       axios.post('http://localhost:3000/create', data)
       .then( function (res){
         if(res.status == 200){
+          const resName = res.data.name.replace(/\s/g, '')
+          paramToPlayer.value = resName
           loading.value = false
           codeview.value = true
         }
@@ -287,8 +318,10 @@ export default {
       logoHandler,
       logoOrCover,
       jsonMedia,
-      player1,
-      codeview
+      codeview,
+      typeOfPlayer,
+      changeTypeOfPlayer,
+      paramToPlayer
     }
   }
 }
