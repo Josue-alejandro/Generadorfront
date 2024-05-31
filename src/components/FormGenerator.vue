@@ -273,7 +273,7 @@ export default {
 
       console.log(data)
 
-      axios.post('http://localhost:3000/create', data)
+      axios.post('https://inovanexgenerator.onrender.com/create', data)
       .then( function (res){
         if(res.status == 200){
           const resName = res.data.name.replace(/\s/g, '')
