@@ -1,11 +1,25 @@
 <template>
   <div class="form-floating">
-  <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
-    <option value="1" @click="changeTypeOfPlayer('slim')" Selected>Slim</option>
-    <option value="2" @click="changeTypeOfPlayer('vertical')">Vertical</option>
-    <option value="3" @click="changeTypeOfPlayer('minimal')">Minimal</option>
-  </select>
-  <label>Seleccion el modelo del reproductor</label>
+    <div class="step1" v-if="step == 0">
+        <h3>Elige un modo para tu reproductor</h3>
+        <div class="options">
+            <div class="item" @click="changeMode('slim')" :style="[ mode == 'slim' ? {'border-color': 'rgba(255, 0, 0, 0.658)'} : {'border-color': 'rgba(128, 128, 128, 0.158)'}]" >
+                <img :src="slim" width="200" height="120"/>
+                <span>Slim</span>
+            </div>
+            <div class="item" @click="changeMode('vertical')" :style="[ mode == 'vertical' ? {'border-color': 'rgba(255, 0, 0, 0.658)'} : {'border-color': 'rgba(128, 128, 128, 0.158)'}]">
+                <img :src="vertical" width="200" height="120"/>
+                <span>Vertical</span>
+            </div>
+            <div class="item" @click="changeMode('minimal')" :style="[ mode == 'minimal' ? {'border-color': 'rgba(255, 0, 0, 0.658)'} : {'border-color': 'rgba(128, 128, 128, 0.158)'}]">
+                <img :src="minimal" width="200" height="120"/>
+                <span>Minimal</span>
+            </div>
+        </div>
+
+        <button class="btn btn-danger" @click="handleStep">Confirmar</button>
+    </div>
+    <div v-if="step == 1">
 
   <div class="mt-4">
     <div>
@@ -147,7 +161,7 @@
       title=&quot;playergenerated&quot;
       width=&quot;700&quot;
       height=&quot;1000&quot;
-      src=&quot;https://benevolent-cocada-9b1164.netlify.app/{{paramToPlayer}}&quot;&gt;
+      src=&quot;https://benevolent-cocada-9b1164.netlify.app/slim/{{paramToPlayer}}&quot;&gt;
       &lt;/iframe&gt;
     </div>
   </div>
@@ -159,7 +173,7 @@
       title=&quot;playergenerated&quot;
       width=&quot;1000&quot;
       height=&quot;700&quot;
-      src=&quot;https://benevolent-cocada-9b1164.netlify.app/ruta1/{{paramToPlayer}}&quot;&gt;
+      src=&quot;https://benevolent-cocada-9b1164.netlify.app/vertical/{{paramToPlayer}}&quot;&gt;
       &lt;/iframe&gt;
     </div>
   </div>
@@ -171,11 +185,12 @@
       title=&quot;playergenerated&quot;
       width=&quot;800&quot;
       height=&quot;200&quot;
-      src=&quot;https://benevolent-cocada-9b1164.netlify.app/ruta2/{{paramToPlayer}}&quot;&gt;
+      src=&quot;https://benevolent-cocada-9b1164.netlify.app/minimal/{{paramToPlayer}}&quot;&gt;
       &lt;/iframe&gt;
     </div>
   </div>
-</div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -199,6 +214,11 @@ export default {
     const typeOfPlayer = ref('');
     const codeview = ref(false);
     const paramToPlayer = ref('');
+    const step = ref(0)
+    const mode = ref();
+    const slim = ref(require('../assets/slim.png'));
+    const vertical = ref(require('../assets/vertical.png'));
+    const minimal = ref(require('../assets/minimal.png'));
 
     // Data a enviar
     const stations = ref([]);
@@ -210,6 +230,15 @@ export default {
         currentLinkList.value.push(linkInput.value)
         linkInput.value = ''
       }
+    }
+
+    const changeMode = (val) => {
+            mode.value = val
+            typeOfPlayer.value = val
+    }
+
+    const handleStep = () => {
+      step.value = 1
     }
 
     const changeTypeOfPlayer = (type) => {
@@ -280,6 +309,7 @@ export default {
           paramToPlayer.value = resName
           loading.value = false
           codeview.value = true
+          console.log(typeOfPlayer.value)
         }
       })
       .catch( function (error){
@@ -321,7 +351,14 @@ export default {
       codeview,
       typeOfPlayer,
       changeTypeOfPlayer,
-      paramToPlayer
+      paramToPlayer,
+      step,
+      mode,
+      slim,
+      vertical,
+      minimal,
+      changeMode,
+      handleStep
     }
   }
 }
@@ -414,5 +451,40 @@ export default {
   font-family: "Space Mono", monospace;
   font-weight: 400;
   font-style: normal;
+}
+
+.options {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.step1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.item {
+    padding: 1em;
+    border-radius: 8px;
+    border: 3px solid rgba(128, 128, 128, 0.158);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 1em;
+}
+
+.item:hover {
+    border: 3px solid rgba(255, 0, 0, 0.658);
+    cursor: pointer;
+}
+
+.item img {
+    border-radius: 8px;
+    margin-bottom: 1em;
 }
 </style>
