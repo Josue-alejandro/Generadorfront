@@ -66,24 +66,13 @@
             <li class="linkLi" v-for="link in currentLinkList" :key="link">{{ link }}</li>
           </ul>
         </div>
-      <div>
-        <button 
-        class="btn btn-danger" 
-        @click="confirm"
-        >Confirmar</button>
-      </div>
-    </div>
-
-    <div class="stationsList">
-      <div class="card stationCard" v-for="station in stations" :key="station.station_name">
-        <p>Nombre de la radio: {{ station.station_name }}</p><br/>
-        <p>Numero de enlaces: {{ station.station_links.length }}</p>
-      </div>
+      
     </div>
 
   </div>
 
-  <div class="mt-4">
+  <div class="RadioData" v-show="radioMode !== ''">
+    <div class="mt-4">
     <p>Activar metadata</p>
     <div class="form-check form-switch">
       <input class="form-check-input" @click="handleMetada" type="checkbox" role="switch" id="flexSwitchCheckDefault">
@@ -104,18 +93,8 @@
   </div>
 
   <div class="mt-4">
-    <p>Logotipo</p>
 
-    <select 
-    class="form-select mb-4" 
-    id="floatingSelect" 
-    aria-label="Floating label select example"
-    >
-      <option value="1" Selected @click="logoHandler('logo')">Logo fijo</option>
-      <option value="2" @click="logoHandler('caratula')">Mostrar Caratula</option>
-    </select>
-
-    <div v-if="logoOrCover == 1">
+    <div v-if="metadataOn == false">
       <div class="mb-3">
         <input 
         class="form-control" 
@@ -128,24 +107,30 @@
       <img class="previewImage" width="400" height="400" :src="preview">
     </div>
 
-    <div v-else>
-      <div>
-          <input 
-          class="form-control" 
-          placeholder="Json mediacp" 
-          v-model="jsonMedia"
-          >
-      </div>
-    </div>
-
   </div>
 
-  <div class="d-grid gap-2 mt-4">
+  <div>
+    <button 
+    class="btn btn-danger" 
+    @click="confirm"
+    >Confirmar</button>
+  </div>
+
+  <div class="stationsList">
+      <div class="card stationCard" v-for="station in stations" :key="station.station_name">
+        <p>Nombre de la radio: {{ station.station_name }}</p><br/>
+        <p>Numero de enlaces: {{ station.station_links.length }}</p><br/>
+        <p>Metadata: {{ metadataOn === true ? 'Si' : 'No' }}</p>
+      </div>
+  </div>
+
+  <div class="d-grid gap-2 mt-4" v-if="stations.length > 0">
     <button 
     class="btn btn-danger" 
     type="button" 
     @click="generatePlayer"
     v-if="loading == false">Generar Reproductor</button>
+  </div>
   </div>
 
   <div class="d-flex justify-content-center pt-4 pb-4" v-if="loading == true">
