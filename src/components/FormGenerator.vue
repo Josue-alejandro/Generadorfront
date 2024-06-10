@@ -51,7 +51,16 @@
           class="form-control nameInput" 
           placeholder="Nombre de la radio" 
           v-model="currentStationToAdd"
-          :disabled="radioMode == 'radio' && stations.length > 0">
+          :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false">
+        </div>
+
+        <div class="metadataInputs">
+          <input 
+          class="form-control" 
+          type="text" 
+          placeholder="Default Eslogan"
+          :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"
+          v-model="defaultSlogan">
         </div>
         
         <div class="linkRadios">
@@ -59,16 +68,23 @@
             <input class="form-control" 
             v-model="linkInput" 
             placeholder="link" 
-            :disabled="radioMode == 'radio' && stations.length > 0"/>
+            :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"/>
             <button class="btn btn-danger" @click="pushLink">add</button>
           </div>
           <ul>
             <li 
             class="linkLi" 
-            v-for="link in currentLinkList" 
-            :key="link"
+            v-for="(link, index) in currentLinkList" 
+            :key="index"
             >{{ link }}
-            <TrashIcon @click="deleteLink(link)"></TrashIcon>
+            <div class="LiPanel">
+              <div class="upDown">
+                <UpIcon @click="changeLinkPosition('up', link, index)"></UpIcon>
+              </div>
+              <TrashIcon 
+              class="trashIcon"
+              @click="deleteLink(link)"></TrashIcon>
+            </div>
           </li>
           </ul>
         </div>
@@ -82,18 +98,6 @@
     <p>Activar metadata</p>
     <div class="form-check form-switch">
       <input class="form-check-input" @click="handleMetada" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-    </div>
-    <div class="metadataInputs">
-      <input 
-      class="form-control" 
-      type="text" 
-      placeholder="Default Eslogan"
-      v-model="defaultSlogan">
-      <input 
-      class="form-control" 
-      type="text" 
-      placeholder="Default Nombre"
-      v-model="defaultName">
     </div>
     <input 
     v-if="metadataOn" 
@@ -210,11 +214,13 @@ import {ref} from 'vue';
 import axios from 'axios';
 import EditIcon from './icons/EditIcon.vue'
 import TrashIcon from './icons/TrashIcon.vue'
+import UpIcon from './icons/UpIcon.vue'
 
 export default {
   components:{
     EditIcon,
-    TrashIcon
+    TrashIcon,
+    UpIcon,
   },
   setup(){
     // Variables del form
@@ -225,7 +231,6 @@ export default {
     const metadataOn = ref(false);
     const preview = ref();
     const loading = ref(false);
-    const defaultName = ref(''); // Nombre por default
     const defaultSlogan = ref(''); // Eslogan por default
     const logoOrCover = ref(1);
     const jsonMedia = ref(''); // Json de la metadata
@@ -250,6 +255,16 @@ export default {
       if(linkInput.value !== ''){
         currentLinkList.value.push(linkInput.value)
         linkInput.value = ''
+      }
+    }
+
+    const changeLinkPosition = (action ,actualLink, currentIndex) => {
+      const beforeValue = currentIndex - 1
+      let temp = currentLinkList.value[currentIndex]
+      let tempBefore = currentLinkList.value[beforeValue]
+      if(temp && tempBefore){
+        currentLinkList.value[beforeValue] = temp
+        currentLinkList.value[currentIndex] = tempBefore
       }
     }
 
@@ -299,7 +314,6 @@ export default {
       editionMode.value = true
       const result = stations.value.find(val => val.station_name === stationName);
       currentLinkList.value = result.station_links
-      defaultName.value = result.defaultName
       defaultSlogan.value = result.defaultSlogan
       currentStationToAdd.value = result.station_name
       metadataLink.value = result.metadata
@@ -313,7 +327,6 @@ export default {
           const station = {
             station_name: currentStationToAdd.value,
             station_links: currentLinkList.value,
-            defaultName: defaultName.value,
             defaultSlogan: defaultSlogan.value,
             metadata: metadataLink.value
           }
@@ -330,7 +343,6 @@ export default {
     const cancelEdition = () => {
       editionMode.value = false
       currentLinkList.value = ''
-      defaultName.value = ''
       defaultSlogan.value = ''
       currentStationToAdd.value = ''
       metadataLink.value = ''
@@ -341,7 +353,6 @@ export default {
       const station = {
         station_name: currentStationToAdd.value,
         station_links: currentLinkList.value,
-        defaultName: defaultName.value,
         defaultSlogan: defaultSlogan.value,
         metadata: metadataLink.value
       }
@@ -352,7 +363,6 @@ export default {
       }
 
       // Reiniciar datos en el formulario
-      defaultName.value = ''
       defaultSlogan.value = ''
       jsonMedia.value = ''
       metadataLink.value = ''
@@ -376,7 +386,6 @@ export default {
       const newConfig = {
         multiradio: radioMode.value === 'radio' ? 1 : 2,
         metadata: metadataOn.value === true ? 'metadata' : 'nometadata',
-        default_name: defaultName.value,
         default_slogan: defaultSlogan.value,
         logo_img: '',
         json_cover: jsonMedia.value,
@@ -435,7 +444,6 @@ export default {
       config,
       generatePlayer,
       loading,
-      defaultName,
       defaultSlogan,
       logoHandler,
       logoOrCover,
@@ -458,7 +466,8 @@ export default {
       confirmEdition,
       cancelEdition,
       oldStationName,
-      deleteLink
+      deleteLink,
+      changeLinkPosition
     }
   }
 }
@@ -476,6 +485,22 @@ export default {
 
 .linkRadios{
   max-width: 400px;
+}
+
+.upDown{
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  align-items: center;
+}
+
+.trashIcon {
+  margin-left: 15px;
+}
+
+.LiPanel{
+  display: flex;
+  align-items: center;
 }
 
 .stationsList{
@@ -499,6 +524,10 @@ export default {
   margin-bottom: 1em;
 }
 
+ul{
+  padding: 0px;
+}
+
 .linkLi{
   margin-top: 1em;
   border: 1px solid rgba(128, 128, 128, 0.589);
@@ -507,6 +536,7 @@ export default {
   list-style: none;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .metadataInputs{
@@ -515,9 +545,8 @@ export default {
 }
 
 .metadataInputs input{
-  margin-top: 1em;
-  max-width: 300px;
-  margin-right: 2em
+  max-width: 400px;
+  margin-bottom: 1em;
 }
 
 .previewImage{
