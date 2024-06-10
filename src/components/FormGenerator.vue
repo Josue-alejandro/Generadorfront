@@ -63,7 +63,13 @@
             <button class="btn btn-danger" @click="pushLink">add</button>
           </div>
           <ul>
-            <li class="linkLi" v-for="link in currentLinkList" :key="link">{{ link }}</li>
+            <li 
+            class="linkLi" 
+            v-for="link in currentLinkList" 
+            :key="link"
+            >{{ link }}
+            <TrashIcon @click="deleteLink(link)"></TrashIcon>
+          </li>
           </ul>
         </div>
       
@@ -89,7 +95,12 @@
       placeholder="Default Nombre"
       v-model="defaultName">
     </div>
-    <input v-if="metadataOn" class="mt-4 form-control" type="text" placeholder="Json de metadata">
+    <input 
+    v-if="metadataOn" 
+    class="mt-4 form-control" 
+    type="text" 
+    placeholder="Json de metadata"
+    v-model="metadataLink">
   </div>
 
   <div class="mt-4">
@@ -109,22 +120,38 @@
 
   </div>
 
-  <div>
+  <div v-if="editionMode === false">
     <button 
     class="btn btn-danger" 
     @click="confirm"
     >Confirmar</button>
   </div>
 
-  <div class="stationsList">
+  <div v-else class="editionButtons">
+    <button 
+    class="btn btn-primary" 
+    @click="confirmEdition(oldStationName)"
+    >Guardar cambios</button>
+
+    <button 
+    class="btn btn-danger" 
+    @click="cancelEdition"
+    >Cancelar</button>
+  </div>
+
+  <div class="stationsList" v-show="editionMode === false">
       <div class="card stationCard" v-for="station in stations" :key="station.station_name">
+        <div class="buttonsStations">
+          <EditIcon @click="editStation(station.station_name)"></EditIcon>
+          <TrashIcon @click="deleteStation(station.station_name)"></TrashIcon>
+        </div>
         <p>Nombre de la radio: {{ station.station_name }}</p><br/>
         <p>Numero de enlaces: {{ station.station_links.length }}</p><br/>
         <p>Metadata: {{ metadataOn === true ? 'Si' : 'No' }}</p>
       </div>
   </div>
 
-  <div class="d-grid gap-2 mt-4" v-if="stations.length > 0">
+  <div class="d-grid gap-2 mt-4" v-if="stations.length > 0 && editionMode === false">
     <button 
     class="btn btn-danger" 
     type="button" 
@@ -181,8 +208,14 @@
 <script>
 import {ref} from 'vue';
 import axios from 'axios';
+import EditIcon from './icons/EditIcon.vue'
+import TrashIcon from './icons/TrashIcon.vue'
 
 export default {
+  components:{
+    EditIcon,
+    TrashIcon
+  },
   setup(){
     // Variables del form
     const currentStationToAdd = ref('');
@@ -192,13 +225,16 @@ export default {
     const metadataOn = ref(false);
     const preview = ref();
     const loading = ref(false);
-    const defaultName = ref('');
-    const defaultSlogan = ref('');
+    const defaultName = ref(''); // Nombre por default
+    const defaultSlogan = ref(''); // Eslogan por default
     const logoOrCover = ref(1);
-    const jsonMedia = ref('');
+    const jsonMedia = ref(''); // Json de la metadata
     const typeOfPlayer = ref('');
     const codeview = ref(false);
     const paramToPlayer = ref('');
+    const metadataLink = ref('');
+    const editionMode = ref(false);
+    const oldStationName = ref('');
     const step = ref(0)
     const mode = ref();
     const slim = ref(require('../assets/slim.png'));
@@ -226,6 +262,16 @@ export default {
       step.value = 1
     }
 
+    const deleteLink = (link) => {
+      let newLinks = []
+      currentLinkList.value.forEach((val) => {
+        if(val !== link){
+          newLinks.push(val)
+        }
+      })
+      currentLinkList.value = newLinks
+    }
+
     const changeTypeOfPlayer = (type) => {
       typeOfPlayer.value = type
     }
@@ -238,17 +284,78 @@ export default {
       metadataOn.value = !metadataOn.value
     }
 
+    const deleteStation = (stationName) => {
+      let newStations = []
+      stations.value.forEach(val => {
+        if(val.station_name !== stationName){
+          newStations.push(val)
+        }
+      })
+
+      stations.value = newStations
+    }
+
+    const editStation = (stationName) => {
+      editionMode.value = true
+      const result = stations.value.find(val => val.station_name === stationName);
+      currentLinkList.value = result.station_links
+      defaultName.value = result.defaultName
+      defaultSlogan.value = result.defaultSlogan
+      currentStationToAdd.value = result.station_name
+      metadataLink.value = result.metadata
+      oldStationName.value = stationName
+    }
+
+    const confirmEdition = (stationName) => {
+      let stationValues = []
+      stations.value.forEach((val)=> {
+        if(val.station_name == stationName){
+          const station = {
+            station_name: currentStationToAdd.value,
+            station_links: currentLinkList.value,
+            defaultName: defaultName.value,
+            defaultSlogan: defaultSlogan.value,
+            metadata: metadataLink.value
+          }
+          stationValues.push(station)
+        }else{
+          stationValues.push(val)
+        }
+      })
+      stations.value = stationValues
+      editionMode.value = false
+      cancelEdition()
+    }
+
+    const cancelEdition = () => {
+      editionMode.value = false
+      currentLinkList.value = ''
+      defaultName.value = ''
+      defaultSlogan.value = ''
+      currentStationToAdd.value = ''
+      metadataLink.value = ''
+      oldStationName.value = ''
+    }
+
     const confirm = () => {
       const station = {
         station_name: currentStationToAdd.value,
-        station_links: currentLinkList.value
+        station_links: currentLinkList.value,
+        defaultName: defaultName.value,
+        defaultSlogan: defaultSlogan.value,
+        metadata: metadataLink.value
       }
       if(currentLinkList.value !== "" && currentStationToAdd.value !== ""){
         stations.value.push(station)
         currentLinkList.value = [];
         currentStationToAdd.value = '';
       }
-   
+
+      // Reiniciar datos en el formulario
+      defaultName.value = ''
+      defaultSlogan.value = ''
+      jsonMedia.value = ''
+      metadataLink.value = ''
     }
 
     const addStation = () => {
@@ -343,7 +450,15 @@ export default {
       vertical,
       minimal,
       changeMode,
-      handleStep
+      handleStep,
+      deleteStation,
+      metadataLink,
+      editStation,
+      editionMode,
+      confirmEdition,
+      cancelEdition,
+      oldStationName,
+      deleteLink
     }
   }
 }
@@ -374,7 +489,7 @@ export default {
 }
 
 .stationCard{
-  padding: 0.5em;
+  padding: 1em;
   width: 260px;
   margin-right: 1.6em;
 }
@@ -390,6 +505,8 @@ export default {
   padding: 0.7em;
   border-radius: 5px;
   list-style: none;
+  display: flex;
+  justify-content: space-between;
 }
 
 .metadataInputs{
@@ -471,5 +588,24 @@ export default {
 .item img {
     border-radius: 8px;
     margin-bottom: 1em;
+}
+
+.buttonsStations{
+  display: flex;
+  flex-direction: row-reverse;
+  margin-bottom: 1em;
+}
+
+.buttonsStations svg {
+  margin-left: 1em;
+  cursor: pointer
+}
+
+.editionButtons button{
+  margin-left: 1em;
+}
+
+svg{
+  cursor: pointer;
 }
 </style>
