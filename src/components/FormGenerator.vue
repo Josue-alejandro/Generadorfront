@@ -144,10 +144,11 @@
   </div>
 
   <div class="stationsList" v-show="editionMode === false">
-      <div class="card stationCard" v-for="station in stations" :key="station.station_name">
+      <div class="card stationCard" v-for="(station, index) in stations" :key="station.station_name">
         <div class="buttonsStations">
-          <EditIcon @click="editStation(station.station_name)"></EditIcon>
           <TrashIcon @click="deleteStation(station.station_name)"></TrashIcon>
+          <EditIcon @click="editStation(station.station_name)"></EditIcon>
+          <LeftIcon @click="changeRadioPosition(index)"></LeftIcon>
         </div>
         <p>Nombre de la radio: {{ station.station_name }}</p><br/>
         <p>Numero de enlaces: {{ station.station_links.length }}</p><br/>
@@ -215,12 +216,14 @@ import axios from 'axios';
 import EditIcon from './icons/EditIcon.vue'
 import TrashIcon from './icons/TrashIcon.vue'
 import UpIcon from './icons/UpIcon.vue'
+import LeftIcon from './icons/LeftIcon.vue'
 
 export default {
   components:{
     EditIcon,
     TrashIcon,
     UpIcon,
+    LeftIcon
   },
   setup(){
     // Variables del form
@@ -265,6 +268,18 @@ export default {
       if(temp && tempBefore){
         currentLinkList.value[beforeValue] = temp
         currentLinkList.value[currentIndex] = tempBefore
+      }
+    }
+
+    // Mover prioridad de Radio
+    const changeRadioPosition = (currentIndex) => {
+      console.log(currentIndex)
+      const beforeValue = currentIndex - 1;
+      const temp = stations.value[currentIndex];
+      const tempBefore = stations.value[beforeValue];
+      if(temp && tempBefore){
+        stations.value[beforeValue] = temp;
+        stations.value[currentIndex] = tempBefore;
       }
     }
 
@@ -467,7 +482,8 @@ export default {
       cancelEdition,
       oldStationName,
       deleteLink,
-      changeLinkPosition
+      changeLinkPosition,
+      changeRadioPosition
     }
   }
 }
@@ -506,6 +522,7 @@ export default {
 .stationsList{
   display: flex;
   padding-top: 1em;
+  flex-wrap: wrap
 }
 
 .linkInput{
@@ -517,6 +534,7 @@ export default {
   padding: 1em;
   width: 260px;
   margin-right: 1.6em;
+  margin-top: 0.6em;
 }
 
 .nameInput{
