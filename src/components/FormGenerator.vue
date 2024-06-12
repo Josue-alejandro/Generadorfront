@@ -65,10 +65,22 @@
         
         <div class="linkRadios">
           <div class="linkInput">
-            <input class="form-control" 
+
+            <input class="form-control dataInputs" 
             v-model="linkInput" 
-            placeholder="link" 
+            placeholder="Enlace de audio" 
             :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"/>
+
+            <input class="form-control dataInputs" 
+            v-model="metadataInput" 
+            placeholder="Enlace de Metadata" 
+            :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"/>
+
+            <input class="form-control dataInputs" 
+            v-model="programmingInput" 
+            placeholder="Enlace de Programacion" 
+            :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"/>
+
             <button class="btn btn-danger" @click="pushLink">add</button>
           </div>
           <ul>
@@ -76,14 +88,19 @@
             class="linkLi" 
             v-for="(link, index) in currentLinkList" 
             :key="index"
-            >{{ link }}
+            >
+            <div class="liData">
+              <span>Enlace:{{ link.link }}</span>
+              <span>Metadata: {{ link.metadata }}</span>
+              <span>Programacion: {{ link.programming }}</span>
+            </div>
             <div class="LiPanel">
               <div class="upDown">
-                <UpIcon @click="changeLinkPosition('up', link, index)"></UpIcon>
+                <UpIcon @click="changeLinkPosition('up', link.link, index)"></UpIcon>
               </div>
               <TrashIcon 
               class="trashIcon"
-              @click="deleteLink(link)"></TrashIcon>
+              @click="deleteLink(link.link)"></TrashIcon>
             </div>
           </li>
           </ul>
@@ -91,47 +108,33 @@
       
     </div>
 
-  </div>
+  <div class="mt-4" v-if="radioMode !== ''">
 
-  <div class="RadioData" v-show="radioMode !== ''">
-    <div class="mt-4">
-    <p>Activar metadata</p>
-    <div class="form-check form-switch">
-      <input class="form-check-input" @click="handleMetada" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-    </div>
-    <input 
-    v-if="metadataOn" 
-    class="mt-4 form-control" 
-    type="text" 
-    placeholder="Json de metadata"
-    v-model="metadataLink">
-  </div>
+    <span class="mb-3">Caratula por defecto:</span>
 
-  <div class="mt-4">
-
-    <div v-if="metadataOn == false">
+    <div class="mt-3">
       <div class="mb-3">
-        <input 
-        class="form-control" 
+        <input
+        class="form-control mt-3" 
         type="file" 
         id="formFile" 
         accept="image/*"
         @change="previewfile">
       </div>
       
-      <img class="previewImage" width="400" height="400" :src="preview">
+      <img class="previewImage mt-3" width="230" height="230" :src="preview">
     </div>
 
   </div>
 
-  <div v-if="editionMode === false">
+  <div v-if="editionMode === false && radioMode !== ''" class="mt-5">
     <button 
     class="btn btn-danger" 
     @click="confirm"
     >Confirmar</button>
   </div>
 
-  <div v-else class="editionButtons">
+  <div v-else-if="editionMode == true && radioMode !== ''" class="editionButtons">
     <button 
     class="btn btn-primary" 
     @click="confirmEdition(oldStationName)"
@@ -232,6 +235,8 @@ export default {
     const currentLinkList = ref([]);
     const radioMode = ref('');
     const metadataOn = ref(false);
+    const metadataInput = ref('');
+    const programmingInput = ref('');
     const preview = ref();
     const loading = ref(false);
     const defaultSlogan = ref(''); // Eslogan por default
@@ -256,8 +261,18 @@ export default {
     // Funciones del form
     const pushLink = () => {
       if(linkInput.value !== ''){
-        currentLinkList.value.push(linkInput.value)
-        linkInput.value = ''
+
+        const radio = {
+          link: linkInput.value,
+          metadata: metadataInput.value,
+          programming: programmingInput.value
+        }
+
+        currentLinkList.value.push(radio)
+        linkInput.value = '';
+        metadataInput.value = '';
+        programmingInput.value = '';
+
       }
     }
 
@@ -328,6 +343,7 @@ export default {
     const editStation = (stationName) => {
       editionMode.value = true
       const result = stations.value.find(val => val.station_name === stationName);
+      console.log(result)
       currentLinkList.value = result.station_links
       defaultSlogan.value = result.defaultSlogan
       currentStationToAdd.value = result.station_name
@@ -483,7 +499,9 @@ export default {
       oldStationName,
       deleteLink,
       changeLinkPosition,
-      changeRadioPosition
+      changeRadioPosition,
+      metadataInput,
+      programmingInput
     }
   }
 }
@@ -527,7 +545,12 @@ export default {
 
 .linkInput{
   display: flex;
-  flex-direction: row
+  flex-direction: column
+}
+
+.dataInputs{
+  margin-top: 1em;
+  margin-bottom: 1em
 }
 
 .stationCard{
@@ -552,9 +575,18 @@ ul{
   padding: 0.7em;
   border-radius: 5px;
   list-style: none;
-  display: flex;
   justify-content: space-between;
   align-items: center;
+  display: flex;
+}
+
+.liData{
+  display: flex;
+  flex-direction: column;
+}
+
+.liData{
+  margin-bottom: 0.4em
 }
 
 .metadataInputs{
