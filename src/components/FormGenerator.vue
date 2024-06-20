@@ -423,18 +423,17 @@ export default {
       }
 
       config.value = newConfig;
-      console.log(config.value);
-      console.log(stations.value)
 
       const data = {
-        singleId: 2,
         station: stations.value,
         config: config.value
       }
 
       console.log(data)
 
-      axios.post('https://player-radio.inovanex.com/create', data)
+      const url = 'http://localhost:3000/create';
+
+      axios.post(url, data)
       .then( function (res){
         if(res.status == 200){
           const resName = res.data.name.replace(/\s/g, '')
