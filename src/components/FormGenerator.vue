@@ -431,7 +431,7 @@ export default {
 
       console.log(data)
 
-      const url = 'http://localhost:3000/create';
+      const url = 'https://player-radio-backend.inovanex.com/create';
 
       axios.post(url, data)
       .then( function (res){
