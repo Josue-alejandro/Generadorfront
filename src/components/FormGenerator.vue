@@ -127,6 +127,17 @@
 
   </div>
 
+  <div class="mt-4" v-if="radioMode !== ''">
+
+    <span class="mb-3">Color Tema:</span>
+
+    <div class="mt-3">
+      <div class="mb-3">
+        <input v-model="colorTheme" type="color">
+      </div>
+    </div>
+  </div>
+
   <div v-if="editionMode === false && radioMode !== ''" class="mt-5">
     <button 
     class="btn btn-danger" 
@@ -253,6 +264,8 @@ export default {
     const slim = ref(require('../assets/slim.png'));
     const vertical = ref(require('../assets/vertical.png'));
     const minimal = ref(require('../assets/minimal.png'));
+    const colorTheme = ref('');
+    const defaultImage = ref('');
 
     // Data a enviar
     const stations = ref([]);
@@ -408,6 +421,9 @@ export default {
     }
 
     const previewfile = (event) => {
+      const form = new FormData();
+      form.append('defaultImage', event.target.files[0])
+      defaultImage.value = form
       preview.value = URL.createObjectURL(event.target.files[0])
     }
 
@@ -418,8 +434,9 @@ export default {
         multiradio: radioMode.value === 'radio' ? 1 : 2,
         metadata: metadataOn.value === true ? 'metadata' : 'nometadata',
         default_slogan: defaultSlogan.value,
-        logo_img: '',
+        logo_img: defaultImage.value,
         json_cover: jsonMedia.value,
+        color: colorTheme.value
       }
 
       config.value = newConfig;
@@ -432,7 +449,6 @@ export default {
       console.log(data)
 
       const url = 'https://player-radio-backend.inovanex.com/create';
-
       axios.post(url, data)
       .then( function (res){
         if(res.status == 200){
@@ -500,7 +516,8 @@ export default {
       changeLinkPosition,
       changeRadioPosition,
       metadataInput,
-      programmingInput
+      programmingInput,
+      colorTheme
     }
   }
 }
