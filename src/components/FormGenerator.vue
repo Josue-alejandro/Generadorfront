@@ -1,7 +1,8 @@
 <template>
   <div class="form-floating">
-    <div class="step1" v-if="step == 0">
-        <h3>Elige un modo para tu reproductor</h3>
+    <div class="step1" >
+
+      <span> Modelo del reproductor: </span>
         <div class="options">
             <div class="item" @click="changeMode('slim')" :style="[ mode == 'slim' ? {'border-color': 'rgba(255, 0, 0, 0.658)'} : {'border-color': 'rgba(128, 128, 128, 0.158)'}]" >
                 <img :src="slim" width="200" height="120"/>
@@ -17,9 +18,8 @@
             </div>
         </div>
 
-        <button class="btn btn-danger" @click="handleStep">Confirmar</button>
     </div>
-    <div v-if="step == 1">
+    <div>
 
   <div class="mt-4">
     <div>
@@ -45,7 +45,7 @@
       </div>
     </div>
 
-    <div v-if="radioMode !== ''">
+    <div>
         <div class="addRadio">
           <input 
           class="form-control nameInput" 
@@ -109,7 +109,7 @@
       
     </div>
 
-  <div class="mt-4" v-if="radioMode !== ''">
+  <div class="mt-4">
 
     <span class="mb-3">Caratula por defecto:</span>
 
@@ -128,7 +128,7 @@
 
   </div>
 
-  <div class="mt-4" v-if="radioMode !== ''">
+  <div class="mt-4">
 
     <span class="mb-3">Color principal y color de texto:</span>
 
@@ -146,7 +146,7 @@
     </div>
   </div>
 
-  <div class="mt-4" v-if="radioMode !== ''">
+  <div class="mt-4">
     <div class="form-floating">
       <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
         <option value="Roboto Mono" class="robotoFont">Roboto Mono</option>
@@ -279,7 +279,6 @@ export default {
     const metadataLink = ref('');
     const editionMode = ref(false);
     const oldStationName = ref('');
-    const step = ref(0)
     const mode = ref();
     const slim = ref(require('../assets/slim.png'));
     const vertical = ref(require('../assets/vertical.png'));
@@ -335,10 +334,6 @@ export default {
     const changeMode = (val) => {
             mode.value = val
             typeOfPlayer.value = val
-    }
-
-    const handleStep = () => {
-      step.value = 1
     }
 
     const deleteLink = (link) => {
@@ -521,13 +516,11 @@ export default {
       typeOfPlayer,
       changeTypeOfPlayer,
       paramToPlayer,
-      step,
       mode,
       slim,
       vertical,
       minimal,
       changeMode,
-      handleStep,
       deleteStation,
       metadataLink,
       editStation,
@@ -733,16 +726,15 @@ ul{
 
 .options {
     display: flex;
-    justify-content: center;
+    justify-content: left;
     flex-wrap: wrap;
 }
 
 .step1 {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    min-height: 60vh;
+    justify-content: left;
+    align-items: left;
 }
 
 .item {
