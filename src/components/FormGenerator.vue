@@ -96,7 +96,8 @@
             </div>
             <div class="LiPanel">
               <div class="upDown">
-                <UpIcon @click="changeLinkPosition('up', link.link, index)"></UpIcon>
+                <UpIcon 
+                @click="changeLinkPosition('up', link.link, index)"></UpIcon>
               </div>
               <TrashIcon 
               class="trashIcon"
@@ -342,12 +343,14 @@ export default {
 
     const deleteLink = (link) => {
       let newLinks = []
+      console.log(link)
       currentLinkList.value.forEach((val) => {
-        if(val !== link){
+        if(val.link !== link){
           newLinks.push(val)
         }
       })
       currentLinkList.value = newLinks
+      console.log(newLinks)
     }
 
     const changeTypeOfPlayer = (type) => {
