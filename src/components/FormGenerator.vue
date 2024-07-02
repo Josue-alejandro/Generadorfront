@@ -1,6 +1,6 @@
 <template>
   <div class="form-floating">
-    <div class="step1" >
+    <div class="step1" v-if="editionLinkMode === false">
 
       <span> Modelo del reproductor: </span>
         <div class="options">
@@ -21,7 +21,34 @@
     </div>
     <div>
 
-  <div class="mt-4">
+      <div v-if="editionLinkMode === true">
+        <div class="linkInput">
+
+          <span>Editar enlace</span>
+          
+          <input class="form-control dataInputs" 
+          v-model="linkEditInput" 
+          placeholder="Enlace de audio" 
+          />
+          
+          <input class="form-control dataInputs" 
+          v-model="metadataEditInput" 
+          placeholder="Enlace de Metadata" 
+          />
+          
+          <input class="form-control dataInputs" 
+          v-model="programmingEditInput" 
+          placeholder="Enlace de Programacion" 
+          />
+
+          <div class="d-flex mt-4">
+            <button class="btn btn-danger me-4" @click="confirmEditLink(oldLinkId)">Confirmar</button>
+            <button class="btn btn-warning" @click="cancelEditLink">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
+  <div class="mt-4" v-if="editionLinkMode === false">
     <div>
       <div class="form-check form-check-inline">
         <input 
@@ -29,7 +56,8 @@
         type="radio" 
         name="inlineRadioOptions" 
         id="inlineRadio1"
-        @click="selectingMode('radio')" 
+        @click="selectingMode('radio')"
+        required
         value="option1">
         <label class="form-check-label" for="inlineRadio1">Radio Unica</label>
       </div>
@@ -38,7 +66,8 @@
         class="form-check-input" 
         type="radio" 
         name="inlineRadioOptions" 
-        id="inlineRadio2" 
+        id="inlineRadio2"
+        required
         @click="selectingMode('multiradio')"
         value="option2">
         <label class="form-check-label" for="inlineRadio2">Multi Radio</label>
@@ -49,6 +78,7 @@
         <div class="addRadio">
           <input 
           class="form-control nameInput" 
+          required
           placeholder="Nombre de la radio" 
           v-model="currentStationToAdd"
           :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false">
@@ -58,6 +88,7 @@
           <input 
           class="form-control" 
           type="text" 
+          required
           placeholder="Default Eslogan"
           :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"
           v-model="defaultSlogan">
@@ -81,7 +112,7 @@
             placeholder="Enlace de Programacion" 
             :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"/>
 
-            <button class="btn btn-danger" @click="pushLink">add</button>
+            <button class="btn btn-danger" @click="pushLink">Agregar a la lista</button>
           </div>
           <ul>
             <li 
@@ -90,7 +121,7 @@
             :key="index"
             >
             <div class="liData">
-              <span>Enlace:{{ link.link }}</span>
+              <span>Enlace: {{ link.link }}</span>
               <span>Metadata: {{ link.metadata }}</span>
               <span>Programacion: {{ link.programming }}</span>
             </div>
@@ -99,6 +130,7 @@
                 <UpIcon 
                 @click="changeLinkPosition('up', link.link, index)"></UpIcon>
               </div>
+              <EditIcon @click="editLink(link.link)"></EditIcon>
               <TrashIcon 
               class="trashIcon"
               @click="deleteLink(link.link)"></TrashIcon>
@@ -287,6 +319,13 @@ export default {
     const colorTheme2 = ref('#e2e2e2')
     const defaultImage = ref('');
 
+    //Inputs de edicion
+    const editionLinkMode = ref(false)
+    const linkEditInput = ref('');
+    const metadataEditInput = ref('');
+    const programmingEditInput = ref('');
+    const oldLinkId = ref('')
+
     // Data a enviar
     const stations = ref([]);
     const config = ref();
@@ -371,6 +410,23 @@ export default {
       stations.value = newStations
     }
 
+    const editLink = (link) => {
+      editionLinkMode.value = true
+      const result = currentLinkList.value.find(val => val.link === link);
+      console.log(result)
+      oldLinkId.value = result.link
+      linkEditInput.value = result.link
+      programmingEditInput.value = result.programming
+      metadataEditInput.value = result.metadata
+    }
+
+    const cancelEditLink = () => {
+      editionLinkMode.value = false
+      linkEditInput.value = ''
+      programmingEditInput.value = ''
+      metadataEditInput.value = ''
+    }
+
     const editStation = (stationName) => {
       editionMode.value = true
       const result = stations.value.find(val => val.station_name === stationName);
@@ -380,6 +436,26 @@ export default {
       currentStationToAdd.value = result.station_name
       metadataLink.value = result.metadata
       oldStationName.value = stationName
+    }
+
+    const confirmEditLink = (link) => {
+      let linkValues = []
+      currentLinkList.value.forEach(val => {
+        if(val.link == link){
+          const linkData = {
+            link: linkEditInput.value,
+            metadata: metadataEditInput.value,
+            programming: programmingEditInput.value,
+          }
+          linkValues.push(linkData)
+        }else{
+          linkValues.push(val)
+        }
+      })
+      console.log(linkValues)
+      currentLinkList.value = linkValues
+      editionLinkMode.value = false
+      cancelEditLink()
     }
 
     const confirmEdition = (stationName) => {
@@ -534,7 +610,15 @@ export default {
       metadataInput,
       programmingInput,
       colorTheme,
-      colorTheme2
+      colorTheme2,
+      programmingEditInput,
+      metadataEditInput,
+      linkEditInput,
+      editLink,
+      editionLinkMode,
+      cancelEditLink,
+      confirmEditLink,
+      oldLinkId
     }
   }
 }
@@ -619,7 +703,7 @@ export default {
 }
 
 .trashIcon {
-  margin-left: 15px;
+  margin-left: 0px;
 }
 
 .LiPanel{
