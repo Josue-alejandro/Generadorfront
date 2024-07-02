@@ -129,12 +129,31 @@
 
   <div class="mt-4" v-if="radioMode !== ''">
 
-    <span class="mb-3">Color Tema:</span>
+    <span class="mb-3">Color principal y color de texto:</span>
 
     <div class="mt-3">
-      <div class="mb-3">
-        <input v-model="colorTheme" type="color">
+      <div class="mb-3 colorDiv">
+        <div class="colorPalette">
+          <input v-model="colorTheme" type="color">
+          <span>{{ colorTheme }}</span>
+        </div>
+        <div class="colorPalette">
+          <input v-model="colorTheme2" type="color">
+          <span>{{ colorTheme2 }}</span>
+        </div>
       </div>
+    </div>
+  </div>
+
+  <div class="mt-4" v-if="radioMode !== ''">
+    <div class="form-floating">
+      <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+        <option value="Roboto Mono" class="robotoFont">Roboto Mono</option>
+        <option value="Montserrat" class="monserrat">Montserrat</option>
+        <option value="Raleway" class="Ralway">Raleway</option>
+        <option value="Playwrite DE Grund" class="playwrite">Play Write</option>
+      </select>
+      <label for="floatingSelect">Selecciona una fuente</label>
     </div>
   </div>
 
@@ -264,7 +283,8 @@ export default {
     const slim = ref(require('../assets/slim.png'));
     const vertical = ref(require('../assets/vertical.png'));
     const minimal = ref(require('../assets/minimal.png'));
-    const colorTheme = ref('');
+    const colorTheme = ref('#cd2327');
+    const colorTheme2 = ref('#e2e2e2')
     const defaultImage = ref('');
 
     // Data a enviar
@@ -517,7 +537,8 @@ export default {
       changeRadioPosition,
       metadataInput,
       programmingInput,
-      colorTheme
+      colorTheme,
+      colorTheme2
     }
   }
 }
@@ -525,6 +546,63 @@ export default {
 
 <style setup>
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playwrite+DE+Grund:wght@100..400&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
+.robotoFont{
+  font-family: "Roboto Mono", monospace;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.monserrat{
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.Ralway{
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.playwrite{
+  font-family: "Playwrite DE Grund", cursive;
+  font-optical-sizing: auto;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.colorPalette {
+  border: 1px solid rgba(0, 0, 0, 0.199);
+  width: 120px;
+  height: 140px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: safe;
+  font-size: 20px;
+  font-weight: lighter;
+  color: #505050;
+  margin: 1em
+}
+
+.colorDiv{
+  display: flex
+}
+
+.colorPalette input{
+  border: 0px;
+  width: 118px;
+  height: 90px;
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer
+}
 
 .addRadio{
   display: flex;
