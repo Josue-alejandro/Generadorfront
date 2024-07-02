@@ -155,7 +155,7 @@
         @change="previewfile">
       </div>
       
-      <img class="previewImage mt-3" width="230" height="230" :src="preview">
+      <img class="previewImage mt-3" v-show="preview" width="230" height="230" :src="preview">
     </div>
 
   </div>
@@ -185,12 +185,15 @@
         <option value="Montserrat" class="monserrat">Montserrat</option>
         <option value="Raleway" class="Ralway">Raleway</option>
         <option value="Playwrite DE Grund" class="playwrite">Play Write</option>
+        <option value="Playwrite DE Grund">Poppins</option>
+        <option value="Lato" class="lato">Lato</option>
+        <option value="Arimo" class="Arimo">Helvetica</option>
       </select>
       <label for="floatingSelect">Selecciona una fuente</label>
     </div>
   </div>
 
-  <div v-if="editionMode === false && radioMode !== ''" class="mt-5">
+  <div v-if="editionMode === false" class="mt-5">
     <button 
     class="btn btn-danger" 
     @click="confirm"
@@ -630,6 +633,8 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playwrite+DE+Grund:wght@100..400&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&display=swap');
 
 .robotoFont{
   font-family: "Roboto Mono", monospace;
@@ -640,12 +645,14 @@ export default {
 .monserrat{
   font-family: "Montserrat", sans-serif;
   font-optical-sizing: auto;
+  font-weight: 400;
   font-style: normal;
 }
 
 .Ralway{
   font-family: "Raleway", sans-serif;
   font-optical-sizing: auto;
+  font-weight: 400;
   font-style: normal;
 }
 
@@ -653,6 +660,19 @@ export default {
   font-family: "Playwrite DE Grund", cursive;
   font-optical-sizing: auto;
   font-weight: 200;
+  font-style: normal;
+}
+
+.lato{
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.Arimo{
+  font-family: "Arimo", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
   font-style: normal;
 }
 
