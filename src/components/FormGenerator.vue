@@ -162,19 +162,20 @@
 
   <div class="mt-4">
 
-    <span class="mb-3">Color principal y color de texto:</span>
-
-    <div class="mt-3">
-      <div class="mb-3 colorDiv">
-        <div class="colorPalette">
-          <input v-model="colorTheme" type="color">
-          <span>{{ colorTheme }}</span>
-        </div>
-        <div class="colorPalette">
-          <input v-model="colorTheme2" type="color">
-          <span>{{ colorTheme2 }}</span>
-        </div>
-      </div>
+    <span>Color tema y color de texto</span>
+    <div class="colorPickers d-flex mt-4">
+      <input 
+      class="colorPicker me-4"
+      :style="{borderColor: colorTheme}" 
+      v-model="colorTheme" 
+      type="text" 
+      data-coloris>
+      <input 
+      class="colorPicker"
+      :style="{borderColor: colorTheme2}" 
+      v-model="colorTheme2" 
+      type="text" 
+      data-coloris>  
     </div>
   </div>
 
@@ -292,8 +293,8 @@ export default {
     EditIcon,
     TrashIcon,
     UpIcon,
-    LeftIcon
-  },
+    LeftIcon,
+    },
   setup(){
     // Variables del form
     const currentStationToAdd = ref('');
@@ -640,6 +641,24 @@ export default {
   font-family: "Roboto Mono", monospace;
   font-optical-sizing: auto;
   font-style: normal;
+}
+
+.colorPicker{
+    background-color: none;
+    border: 1px solid red;
+    border-bottom: 50px solid red;
+    cursor: pointer;
+    border-radius: 3px;
+    width: 100px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    user-select: none;
+    font-weight: 300
+}
+
+.clr-field button{
+  display: none;
 }
 
 .monserrat{
