@@ -1,5 +1,11 @@
 <template>
   <div class="form-floating">
+
+    <Transition>
+      <div class="notificacion" v-if="errorForm">
+        <span>Necesitas rellenar todos los campos.</span>
+      </div>
+    </Transition>
     <div class="step1" v-if="editionLinkMode === false">
 
       <span> Modelo del reproductor: </span>
@@ -181,7 +187,7 @@
 
   <div class="mt-4">
     <div class="form-floating">
-      <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+      <select class="form-select" v-model="fontTheme" id="floatingSelect" aria-label="Floating label select example">
         <option value="Roboto Mono" class="robotoFont">Roboto Mono</option>
         <option value="Montserrat" class="monserrat">Montserrat</option>
         <option value="Raleway" class="Ralway">Raleway</option>
@@ -322,6 +328,8 @@ export default {
     const colorTheme = ref('#cd2327');
     const colorTheme2 = ref('#e2e2e2')
     const defaultImage = ref('');
+    const fontTheme = ref('');
+    const errorForm = ref(false);
 
     //Inputs de edicion
     const editionLinkMode = ref(false)
@@ -492,16 +500,23 @@ export default {
     }
 
     const confirm = () => {
+      errorForm.value = false
       const station = {
         station_name: currentStationToAdd.value,
         station_links: currentLinkList.value,
         defaultSlogan: defaultSlogan.value,
-        metadata: metadataLink.value
+        metadata: metadataLink.value,
+        slogan: defaultSlogan.value
       }
-      if(currentLinkList.value !== "" && currentStationToAdd.value !== ""){
+      if(currentLinkList.value !== "" && currentStationToAdd.value !== "" && defaultSlogan.value !== ""){
         stations.value.push(station)
         currentLinkList.value = [];
         currentStationToAdd.value = '';
+      }else{
+        errorForm.value = true
+        setTimeout(function(){
+          errorForm.value = false ;
+        }, 5000);
       }
 
       // Reiniciar datos en el formulario
@@ -534,7 +549,9 @@ export default {
         default_slogan: defaultSlogan.value,
         logo_img: defaultImage.value,
         json_cover: jsonMedia.value,
-        color: colorTheme.value
+        color: colorTheme.value,
+        color2: colorTheme2.value,
+        font: fontTheme
       }
 
       config.value = newConfig;
@@ -547,6 +564,7 @@ export default {
       console.log(data)
 
       const url = 'https://player-radio-backend.inovanex.com/create';
+      //const url = 'http://localhost:3000/create'
       axios.post(url, data)
       .then( function (res){
         if(res.status == 200){
@@ -622,7 +640,9 @@ export default {
       editionLinkMode,
       cancelEditLink,
       confirmEditLink,
-      oldLinkId
+      oldLinkId,
+      fontTheme,
+      errorForm
     }
   }
 }
@@ -641,6 +661,19 @@ export default {
   font-family: "Roboto Mono", monospace;
   font-optical-sizing: auto;
   font-style: normal;
+}
+
+.notificacion{
+  position: fixed;
+  top: 2em;
+  left: 35%;
+  padding: 2em;
+  border-radius: 20px;
+  background-color: white;
+  text-align: center;
+  box-shadow: 0px 2px 14px 0px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 0px 2px 14px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 2px 14px 0px rgba(0,0,0,0.75);
 }
 
 .colorPicker{
@@ -898,5 +931,19 @@ ul{
 
 svg{
   cursor: pointer;
+}
+
+.v-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.v-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.v-enter-from,
+.v-leave-to {
+  transform: translateY(-20px);
+  opacity: 0;
 }
 </style>
