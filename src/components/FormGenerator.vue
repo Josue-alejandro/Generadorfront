@@ -192,7 +192,7 @@
         <option value="Montserrat" class="monserrat">Montserrat</option>
         <option value="Raleway" class="Ralway">Raleway</option>
         <option value="Playwrite DE Grund" class="playwrite">Play Write</option>
-        <option value="Playwrite DE Grund">Poppins</option>
+        <option value="Poppins" class="poppins-regular" selected>Poppins</option>
         <option value="Lato" class="lato">Lato</option>
         <option value="Arimo" class="Arimo">Helvetica</option>
       </select>
@@ -717,6 +717,12 @@ export default {
 
 .lato{
   font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.poppins-regular {
+  font-family: "Poppins", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
