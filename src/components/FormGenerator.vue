@@ -47,14 +47,18 @@
           placeholder="Enlace de Programacion" 
           />
 
-          <div class="d-flex mt-4">
+          <div class="d-flex bloqueSpacing">
             <button class="btn btn-danger me-4" @click="confirmEditLink(oldLinkId)">Confirmar</button>
             <button class="btn btn-warning" @click="cancelEditLink">Cancelar</button>
           </div>
         </div>
       </div>
 
-  <div class="mt-4" v-if="editionLinkMode === false">
+  <div class="bloqueSpacing">
+    <span>Configuración de el reproductor:</span>
+  </div>
+
+  <div class="bloqueSpacing" v-if="editionLinkMode === false">
     <div>
       <div class="form-check form-check-inline">
         <input 
@@ -81,6 +85,10 @@
     </div>
 
     <div>
+
+      <div class="metadataInputs mt-4">
+        <span class="infoText">Estos campos son obligatorios.</span>
+      </div>
         <div class="addRadio">
           <input 
           class="form-control nameInput" 
@@ -99,14 +107,17 @@
           :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"
           v-model="defaultSlogan">
         </div>
-        
-        <div class="linkRadios">
-          <div class="linkInput">
 
-            <input class="form-control dataInputs" 
+        <div class="metadataInputs">
+          <input class="form-control dataInputs" 
             v-model="linkInput" 
             placeholder="Enlace de audio" 
             :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"/>
+        </div>
+        
+        <div class="linkRadios">
+          <span class="infoText">Campos opcionales.</span>
+          <div class="linkInput">
 
             <input class="form-control dataInputs" 
             v-model="metadataInput" 
@@ -147,7 +158,7 @@
       
     </div>
 
-  <div class="mt-4">
+  <div class="bloqueSpacing">
 
     <span class="mb-3">Caratula por defecto:</span>
 
@@ -166,7 +177,7 @@
 
   </div>
 
-  <div class="mt-4">
+  <div class="bloqueSpacing">
 
     <span>Color tema y color de texto</span>
     <div class="colorPickers d-flex mt-4">
@@ -185,7 +196,7 @@
     </div>
   </div>
 
-  <div class="mt-4">
+  <div class="bloqueSpacing">
     <div class="form-floating">
       <select class="form-select" v-model="fontTheme" id="floatingSelect" aria-label="Floating label select example">
         <option value="Roboto Mono" class="robotoFont">Roboto Mono</option>
@@ -232,7 +243,7 @@
       </div>
   </div>
 
-  <div class="d-grid gap-2 mt-4" v-if="stations.length > 0 && editionMode === false">
+  <div class="d-grid gap-2 bloqueSpacing" v-if="stations.length > 0 && editionMode === false">
     <button 
     class="btn btn-danger" 
     type="button" 
@@ -753,6 +764,11 @@ export default {
   display: flex
 }
 
+.bloqueSpacing{
+  margin-top: 3.5em;
+  margin-bottom: 3.5em;
+}
+
 .colorPalette input{
   border: 0px;
   width: 118px;
@@ -766,7 +782,12 @@ export default {
   display: flex;
   flex-direction: row;
   max-width: 400px;
-  margin-top: 1em
+  margin-top: 0em
+}
+
+.infoText{
+  font-size: 14px;
+  color: #505050c4;
 }
 
 .linkRadios{
@@ -848,7 +869,6 @@ ul{
 
 .metadataInputs input{
   max-width: 400px;
-  margin-bottom: 1em;
 }
 
 .previewImage{
