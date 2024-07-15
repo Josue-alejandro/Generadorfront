@@ -54,11 +54,11 @@
         </div>
       </div>
 
-  <div class="bloqueSpacing">
+  <div class="">
     <span>Configuración de el reproductor:</span>
   </div>
 
-  <div class="bloqueSpacing" v-if="editionLinkMode === false">
+  <div class="bloqueSpacingSpecial" v-if="editionLinkMode === false">
     <div>
       <div class="form-check form-check-inline">
         <input 
@@ -67,6 +67,7 @@
         name="inlineRadioOptions" 
         id="inlineRadio1"
         @click="selectingMode('radio')"
+        checked
         required
         value="option1">
         <label class="form-check-label" for="inlineRadio1">Radio Unica</label>
@@ -87,7 +88,7 @@
     <div>
 
       <div class="metadataInputs mt-4">
-        <span class="infoText">Estos campos son obligatorios.</span>
+        <span class="infoText">Campos obligatorios.</span>
       </div>
         <div class="addRadio">
           <input 
@@ -103,33 +104,43 @@
           class="form-control" 
           type="text" 
           required
-          placeholder="Default Eslogan"
+          placeholder="Eslogan de la radio"
           :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"
           v-model="defaultSlogan">
         </div>
 
         <div class="metadataInputs">
+              <input
+              class="form-control mt-3" 
+              type="file" 
+              id="formFile" 
+              accept="image/*"
+              @change="previewfile">
+        </div>
+
+        <div class="metadataInputs">
+          <img class="previewImage mt-3" v-show="preview" width="130" height="130" :src="preview">
+        </div>
+
+        <div class="metadataInputs">
           <input class="form-control dataInputs" 
-            v-model="linkInput" 
-            placeholder="Enlace de audio" 
+            v-model="mainStreaming" 
+            placeholder="Streamin Principal" 
             :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"/>
         </div>
         
         <div class="linkRadios">
           <span class="infoText">Campos opcionales.</span>
           <div class="linkInput">
+            
+            <div class="metadataInputs">
+              <input class="form-control dataInputs" 
+              v-model="linkInput" 
+              placeholder="Streaming de backup" 
+              :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"/>
+            </div>
 
-            <input class="form-control dataInputs" 
-            v-model="metadataInput" 
-            placeholder="Enlace de Metadata" 
-            :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"/>
-
-            <input class="form-control dataInputs" 
-            v-model="programmingInput" 
-            placeholder="Enlace de Programacion" 
-            :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"/>
-
-            <button class="btn btn-danger" @click="pushLink">Agregar a la lista</button>
+            <button class="btn btn-danger" @click="pushLink">Guardar backup</button>
           </div>
           <ul>
             <li 
@@ -138,16 +149,13 @@
             :key="index"
             >
             <div class="liData">
-              <span>Enlace: {{ link.link }}</span>
-              <span>Metadata: {{ link.metadata }}</span>
-              <span>Programacion: {{ link.programming }}</span>
+              <input v-model="link.link" class="form-control dataInputs">
             </div>
             <div class="LiPanel">
               <div class="upDown">
                 <UpIcon 
                 @click="changeLinkPosition('up', link.link, index)"></UpIcon>
               </div>
-              <EditIcon @click="editLink(link.link)"></EditIcon>
               <TrashIcon 
               class="trashIcon"
               @click="deleteLink(link.link)"></TrashIcon>
@@ -158,24 +166,20 @@
       
     </div>
 
-  <div class="bloqueSpacing">
+    <div class="bloqueSpacing InfoDiv">
 
-    <span class="mb-3">Caratula por defecto:</span>
+      <span class="infoText">Datos de la Radio.</span>
 
-    <div class="mt-3">
-      <div class="mb-3">
-        <input
-        class="form-control mt-3" 
-        type="file" 
-        id="formFile" 
-        accept="image/*"
-        @change="previewfile">
-      </div>
-      
-      <img class="previewImage mt-3" v-show="preview" width="230" height="230" :src="preview">
+      <input class="form-control dataInputs" 
+            v-model="metadataInput" 
+            placeholder="Enlace de Metadata" 
+            :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"/>
+
+      <input class="form-control dataInputs" 
+      v-model="programmingInput" 
+      placeholder="Enlace de Programacion" 
+      :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"/>
     </div>
-
-  </div>
 
   <div class="bloqueSpacing">
 
@@ -215,7 +219,7 @@
     <button 
     class="btn btn-danger" 
     @click="confirm"
-    >Confirmar</button>
+    >{{ radioMode == 'radio' ? 'Guardar Radio' : 'Añadir Nueva Radio' }}</button>
   </div>
 
   <div v-else-if="editionMode == true && radioMode !== ''" class="editionButtons">
@@ -230,16 +234,16 @@
     >Cancelar</button>
   </div>
 
-  <div class="stationsList" v-show="editionMode === false">
+  <div class="stationsList" v-show="editionMode === false || radioMode === 'multiradio'">
       <div class="card stationCard" v-for="(station, index) in stations" :key="station.station_name">
         <div class="buttonsStations">
           <TrashIcon @click="deleteStation(station.station_name)"></TrashIcon>
           <EditIcon @click="editStation(station.station_name)"></EditIcon>
           <LeftIcon @click="changeRadioPosition(index)"></LeftIcon>
         </div>
+        <img :src="station.imgPreview" width="44" height="44" class="radioImgPreview">
         <p>Nombre de la radio: {{ station.station_name }}</p><br/>
         <p>Numero de enlaces: {{ station.station_links.length }}</p><br/>
-        <p>Metadata: {{ metadataOn === true ? 'Si' : 'No' }}</p>
       </div>
   </div>
 
@@ -317,11 +321,12 @@ export default {
     const currentStationToAdd = ref('');
     const linkInput = ref('');
     const currentLinkList = ref([]);
-    const radioMode = ref('');
+    const radioMode = ref('radio');
     const metadataOn = ref(false);
     const metadataInput = ref('');
     const programmingInput = ref('');
     const preview = ref();
+    const mainStreaming = ref(); // Main Streaming
     const loading = ref(false);
     const defaultSlogan = ref(''); // Eslogan por default
     const logoOrCover = ref(1);
@@ -332,7 +337,7 @@ export default {
     const metadataLink = ref('');
     const editionMode = ref(false);
     const oldStationName = ref('');
-    const mode = ref();
+    const mode = ref('vertical');
     const slim = ref(require('../assets/slim.png'));
     const vertical = ref(require('../assets/vertical.png'));
     const minimal = ref(require('../assets/minimal.png'));
@@ -359,15 +364,10 @@ export default {
 
         const radio = {
           link: linkInput.value,
-          metadata: metadataInput.value,
-          programming: programmingInput.value
         }
 
         currentLinkList.value.push(radio)
         linkInput.value = '';
-        metadataInput.value = '';
-        programmingInput.value = '';
-
       }
     }
 
@@ -512,15 +512,17 @@ export default {
 
     const confirm = () => {
       errorForm.value = false
+      currentLinkList.value.unshift({ link: mainStreaming.value})
       const station = {
         station_name: currentStationToAdd.value,
         station_links: currentLinkList.value,
-        defaultSlogan: defaultSlogan.value,
-        metadata: metadataLink.value,
-        slogan: defaultSlogan.value
+        metadata: metadataInput.value,
+        slogan: defaultSlogan.value,
+        imgPreview: preview.value
       }
       if(currentLinkList.value !== "" && currentStationToAdd.value !== "" && defaultSlogan.value !== ""){
         stations.value.push(station)
+        console.log(stations.value)
         currentLinkList.value = [];
         currentStationToAdd.value = '';
       }else{
@@ -533,7 +535,9 @@ export default {
       // Reiniciar datos en el formulario
       defaultSlogan.value = ''
       jsonMedia.value = ''
-      metadataLink.value = ''
+      metadataInput.value = ''
+      mainStreaming.value = ''
+      preview.value = ''
     }
 
     const addStation = () => {
@@ -653,7 +657,8 @@ export default {
       confirmEditLink,
       oldLinkId,
       fontTheme,
-      errorForm
+      errorForm,
+      mainStreaming
     }
   }
 }
@@ -766,6 +771,11 @@ export default {
 
 .bloqueSpacing{
   margin-top: 3.5em;
+  margin-bottom: 3.5em;
+}
+
+.bloqueSpacingSpecial{
+  margin-top: 2.3em;
   margin-bottom: 3.5em;
 }
 
@@ -971,5 +981,14 @@ svg{
 .v-leave-to {
   transform: translateY(-20px);
   opacity: 0;
+}
+
+.InfoDiv {
+  max-width: 400px;
+}
+
+.radioImgPreview{
+  border-radius: 5px;
+  margin-bottom: 1em;
 }
 </style>
