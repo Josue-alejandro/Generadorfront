@@ -252,7 +252,7 @@
     class="btn btn-danger" 
     type="button" 
     @click="generatePlayer"
-    v-if="loading == false">Generar Reproductor</button>
+    >Generar Reproductor</button>
   </div>
   </div>
 
@@ -518,11 +518,13 @@ export default {
         station_links: currentLinkList.value,
         metadata: metadataInput.value,
         slogan: defaultSlogan.value,
-        imgPreview: preview.value
+        imgPreview: preview.value,
+        cover: defaultImage.value
       }
+
+      console.log(station)
       if(currentLinkList.value !== "" && currentStationToAdd.value !== "" && defaultSlogan.value !== ""){
         stations.value.push(station)
-        console.log(stations.value)
         currentLinkList.value = [];
         currentStationToAdd.value = '';
       }else{
@@ -538,6 +540,7 @@ export default {
       metadataInput.value = ''
       mainStreaming.value = ''
       preview.value = ''
+      defaultImage.value = null
     }
 
     const addStation = () => {
@@ -551,11 +554,11 @@ export default {
     const previewfile = (event) => {
       const form = new FormData();
       form.append('defaultImage', event.target.files[0])
-      defaultImage.value = form
+      defaultImage.value = event.target.files[0]
       preview.value = URL.createObjectURL(event.target.files[0])
     }
 
-    const generatePlayer = () => {
+    const generatePlayer = async () => {
       loading.value = true;
 
       const newConfig = {
@@ -571,15 +574,18 @@ export default {
 
       config.value = newConfig;
 
-      const data = {
-        station: stations.value,
-        config: config.value
-      }
+      const data = new FormData() 
 
-      console.log(data)
+      stations.value.forEach((val, index) => {
+        data.append('covers', val.cover, val.station_name + index)
+      })
+      data.append('station', JSON.stringify(stations.value))
+      data.append('config', JSON.stringify(config.value))  
 
       const url = 'https://player-radio-backend.inovanex.com/create';
       //const url = 'http://localhost:3000/create'
+      console.log(data)
+
       axios.post(url, data)
       .then( function (res){
         if(res.status == 200){
