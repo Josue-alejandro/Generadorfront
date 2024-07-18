@@ -88,7 +88,7 @@
     <div>
 
       <div class="metadataInputs mt-4">
-        <span class="infoText">Campos obligatorios.</span>
+        <span class="infoText">Campos obligatorios: Estos datos son necesarios para el funcionamiento del player.</span>
       </div>
         <div class="addRadio">
           <input 
@@ -130,7 +130,7 @@
         </div>
         
         <div class="linkRadios">
-          <span class="infoText">Campos opcionales.</span>
+          <span class="infoText">Campos opcionales: streaming de backups, metadata y programación.</span>
           <div class="linkInput">
             
             <div class="metadataInputs">
@@ -140,7 +140,7 @@
               :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"/>
             </div>
 
-            <button class="btn btn-danger" @click="pushLink">Guardar backup</button>
+            <button class="btn btn-danger" @click="pushLink">Añadir enlace de backup</button>
           </div>
           <ul>
             <li 
@@ -203,11 +203,12 @@
   <div class="bloqueSpacing">
     <div class="form-floating">
       <select class="form-select" v-model="fontTheme" id="floatingSelect" aria-label="Floating label select example">
+        <option value="" selected disabled hidden>Poppins</option>
+        <option value="Poppins" class="poppins-regular">Poppins</option>
         <option value="Roboto Mono" class="robotoFont">Roboto Mono</option>
         <option value="Montserrat" class="monserrat">Montserrat</option>
         <option value="Raleway" class="Ralway">Raleway</option>
         <option value="Playwrite DE Grund" class="playwrite">Play Write</option>
-        <option value="Poppins" class="poppins-regular" selected>Poppins</option>
         <option value="Lato" class="lato">Lato</option>
         <option value="Arimo" class="Arimo">Helvetica</option>
       </select>
@@ -252,6 +253,7 @@
     class="btn btn-danger" 
     type="button" 
     @click="generatePlayer"
+    v-if="loading !== true"
     >Generar Reproductor</button>
   </div>
   </div>
@@ -331,7 +333,7 @@ export default {
     const defaultSlogan = ref(''); // Eslogan por default
     const logoOrCover = ref(1);
     const jsonMedia = ref(''); // Json de la metadata
-    const typeOfPlayer = ref('');
+    const typeOfPlayer = ref('vertical');
     const codeview = ref(false);
     const paramToPlayer = ref('');
     const metadataLink = ref('');
@@ -344,7 +346,7 @@ export default {
     const colorTheme = ref('#cd2327');
     const colorTheme2 = ref('#e2e2e2')
     const defaultImage = ref('');
-    const fontTheme = ref('');
+    const fontTheme = ref('Poppins');
     const errorForm = ref(false);
 
     //Inputs de edicion
