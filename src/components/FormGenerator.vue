@@ -125,7 +125,7 @@
         <div class="metadataInputs">
           <input class="form-control dataInputs" 
             v-model="mainStreaming" 
-            placeholder="Streamin Principal" 
+            placeholder="Streaming Principal" 
             :disabled="radioMode == 'radio' && stations.length > 0 && editionMode == false"/>
         </div>
         
@@ -264,7 +264,7 @@
 
   </div>
 
-  <div v-if="codeview && typeOfPlayer == 'slim'">
+  <div v-if="codeview && mode == 'slim'">
     <div class="codespace">
       &lt;iframe
       id=&quot;player&quot;
@@ -276,7 +276,7 @@
     </div>
   </div>
 
-  <div v-else-if="codeview && typeOfPlayer == 'vertical'">
+  <div v-else-if="codeview && mode == 'vertical'">
     <div class="codespace">
       &lt;iframe
       id=&quot;player&quot;
@@ -288,7 +288,7 @@
     </div>
   </div>
 
-  <div v-else-if="codeview && typeOfPlayer == 'minimal'">
+  <div v-else-if="codeview && mode == 'minimal'">
     <div class="codespace">
       &lt;iframe
       id=&quot;player&quot;
@@ -333,7 +333,6 @@ export default {
     const defaultSlogan = ref(''); // Eslogan por default
     const logoOrCover = ref(1);
     const jsonMedia = ref(''); // Json de la metadata
-    const typeOfPlayer = ref('vertical');
     const codeview = ref(false);
     const paramToPlayer = ref('');
     const metadataLink = ref('');
@@ -397,7 +396,6 @@ export default {
 
     const changeMode = (val) => {
             mode.value = val
-            typeOfPlayer.value = val
     }
 
     const deleteLink = (link) => {
@@ -410,10 +408,6 @@ export default {
       })
       currentLinkList.value = newLinks
       console.log(newLinks)
-    }
-
-    const changeTypeOfPlayer = (type) => {
-      typeOfPlayer.value = type
     }
 
     const selectingMode = (mode) => {
@@ -595,7 +589,6 @@ export default {
           paramToPlayer.value = resName
           loading.value = false
           codeview.value = true
-          console.log(typeOfPlayer.value)
         }
       })
       .catch( function (error){
@@ -634,8 +627,6 @@ export default {
       logoOrCover,
       jsonMedia,
       codeview,
-      typeOfPlayer,
-      changeTypeOfPlayer,
       paramToPlayer,
       mode,
       slim,
