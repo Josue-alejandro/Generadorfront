@@ -115,6 +115,7 @@
               type="file" 
               id="formFile" 
               accept="image/*"
+              ref="fileInputType"
               @change="previewfile">
         </div>
 
@@ -347,6 +348,7 @@ export default {
     const defaultImage = ref('');
     const fontTheme = ref('Poppins');
     const errorForm = ref(false);
+    const fileInputType = ref(null)
 
     //Inputs de edicion
     const editionLinkMode = ref(false)
@@ -449,12 +451,13 @@ export default {
     const editStation = (stationName) => {
       editionMode.value = true
       const result = stations.value.find(val => val.station_name === stationName);
-      console.log(result)
+      mainStreaming.value = result.station_links[0].link
       currentLinkList.value = result.station_links
-      defaultSlogan.value = result.defaultSlogan
+      defaultSlogan.value = result.slogan
       currentStationToAdd.value = result.station_name
-      metadataLink.value = result.metadata
+      metadataInput.value = result.metadata
       oldStationName.value = stationName
+      programmingInput.value = result.programming
     }
 
     const confirmEditLink = (link) => {
@@ -502,8 +505,9 @@ export default {
       currentLinkList.value = ''
       defaultSlogan.value = ''
       currentStationToAdd.value = ''
-      metadataLink.value = ''
+      metadataInput.value = ''
       oldStationName.value = ''
+      programmingInput.value = ''
     }
 
     const confirm = () => {
@@ -515,9 +519,9 @@ export default {
         metadata: metadataInput.value,
         slogan: defaultSlogan.value,
         imgPreview: preview.value,
-        cover: defaultImage.value
+        cover: defaultImage.value,
+        programming: programmingInput.value
       }
-
       console.log(station)
       if(currentLinkList.value !== "" && currentStationToAdd.value !== "" && defaultSlogan.value !== ""){
         stations.value.push(station)
@@ -536,7 +540,10 @@ export default {
       metadataInput.value = ''
       mainStreaming.value = ''
       preview.value = ''
+      programmingInput.value = ''
       defaultImage.value = null
+      fileInputType.value = null
+      console.log(fileInputType.value)
     }
 
     const addStation = () => {
@@ -548,6 +555,7 @@ export default {
     }
 
     const previewfile = (event) => {
+      console.log(event)
       const form = new FormData();
       form.append('defaultImage', event.target.files[0])
       defaultImage.value = event.target.files[0]
@@ -657,7 +665,8 @@ export default {
       oldLinkId,
       fontTheme,
       errorForm,
-      mainStreaming
+      mainStreaming,
+      fileInputType
     }
   }
 }
