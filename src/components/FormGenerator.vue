@@ -542,6 +542,16 @@ export default {
         stations.value.push(station)
         currentLinkList.value = [];
         currentStationToAdd.value = '';
+        // Reiniciar datos en el formulario
+        defaultSlogan.value = ''
+        jsonMedia.value = ''
+        metadataInput.value = ''
+        mainStreaming.value = ''
+        preview.value = ''
+        programmingInput.value = ''
+        defaultImage.value = null
+        fileInputType.value = null
+        linkInput.value = ''
       }else{
         errorForm.value = true
         setTimeout(function(){
@@ -549,16 +559,7 @@ export default {
         }, 5000);
       }
 
-      // Reiniciar datos en el formulario
-      defaultSlogan.value = ''
-      jsonMedia.value = ''
-      metadataInput.value = ''
-      mainStreaming.value = ''
-      preview.value = ''
-      programmingInput.value = ''
-      defaultImage.value = null
-      fileInputType.value = null
-      linkInput.value = ''
+      
     }
 
     const addStation = () => {
