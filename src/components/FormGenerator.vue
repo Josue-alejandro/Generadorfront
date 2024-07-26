@@ -463,6 +463,7 @@ export default {
       oldStationName.value = stationName
       programmingInput.value = result.programming
       defaultImage.value = result.cover
+      window.scrollTo({top: 0, behavior: 'smooth'})
     }
 
     const confirmEditLink = (link) => {
