@@ -345,7 +345,7 @@ export default {
     const minimal = ref(require('../assets/minimal.png'));
     const colorTheme = ref('#cd2327');
     const colorTheme2 = ref('#e2e2e2')
-    const defaultImage = ref('');
+    const defaultImage = ref(null);
     const fontTheme = ref('Poppins');
     const errorForm = ref(false);
     const fileInputType = ref(null)
@@ -451,13 +451,18 @@ export default {
     const editStation = (stationName) => {
       editionMode.value = true
       const result = stations.value.find(val => val.station_name === stationName);
+      preview.value = result.imgPreview
       mainStreaming.value = result.station_links[0].link
+      let backup = result.station_links
+      backup = backup.shift()
+      console.log(backup)
       currentLinkList.value = result.station_links
       defaultSlogan.value = result.slogan
       currentStationToAdd.value = result.station_name
       metadataInput.value = result.metadata
       oldStationName.value = stationName
       programmingInput.value = result.programming
+      defaultImage.value = result.cover
     }
 
     const confirmEditLink = (link) => {
@@ -482,13 +487,20 @@ export default {
 
     const confirmEdition = (stationName) => {
       let stationValues = []
+      const main = mainStreaming.value
+      let audioBackups = currentLinkList.value
+      audioBackups.unshift({link: main})
+      console.log(audioBackups)
       stations.value.forEach((val)=> {
         if(val.station_name == stationName){
           const station = {
             station_name: currentStationToAdd.value,
-            station_links: currentLinkList.value,
-            defaultSlogan: defaultSlogan.value,
-            metadata: metadataLink.value
+            station_links: audioBackups,
+            metadata: metadataInput.value,
+            slogan: defaultSlogan.value,
+            imgPreview: preview.value,
+            cover: defaultImage.value,
+            programming: programmingInput.value,
           }
           stationValues.push(station)
         }else{
@@ -508,6 +520,9 @@ export default {
       metadataInput.value = ''
       oldStationName.value = ''
       programmingInput.value = ''
+      mainStreaming.value = ''
+      preview.value = null
+      defaultImage.value = null
     }
 
     const confirm = () => {
@@ -523,7 +538,7 @@ export default {
         programming: programmingInput.value
       }
       console.log(station)
-      if(currentLinkList.value !== "" && currentStationToAdd.value !== "" && defaultSlogan.value !== ""){
+      if(currentLinkList.value !== "" && currentStationToAdd.value !== "" && defaultSlogan.value !== "" && defaultImage.value !== null){
         stations.value.push(station)
         currentLinkList.value = [];
         currentStationToAdd.value = '';
@@ -543,7 +558,7 @@ export default {
       programmingInput.value = ''
       defaultImage.value = null
       fileInputType.value = null
-      console.log(fileInputType.value)
+      linkInput.value = ''
     }
 
     const addStation = () => {
