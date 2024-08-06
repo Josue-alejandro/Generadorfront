@@ -8,7 +8,7 @@
     </Transition>
     <div class="step1" v-if="editionLinkMode === false">
 
-      <span> Modelo del reproductor: </span>
+      <span id="#">Modelo del reproductor: </span>
         <div class="options">
             <div class="item" @click="changeMode('slim')" :style="[ mode == 'slim' ? {'border-color': 'rgba(255, 0, 0, 0.658)'} : {'border-color': 'rgba(128, 128, 128, 0.158)'}]" >
                 <img :src="slim" width="200" height="120"/>
@@ -272,7 +272,7 @@
       title=&quot;playergenerated&quot;
       width=&quot;700&quot;
       height=&quot;1000&quot;
-      src=&quot;https://benevolent-cocada-9b1164.netlify.app/slim/{{paramToPlayer}}&quot;&gt;
+      src=&quot;https://player-radio-streaming.inovanex.com/slim/{{paramToPlayer}}&quot;&gt;
       &lt;/iframe&gt;
     </div>
   </div>
@@ -284,7 +284,7 @@
       title=&quot;playergenerated&quot;
       width=&quot;1000&quot;
       height=&quot;700&quot;
-      src=&quot;https://benevolent-cocada-9b1164.netlify.app/vertical/{{paramToPlayer}}&quot;&gt;
+      src=&quot;https://player-radio-streaming.inovanex.com/vertical/{{paramToPlayer}}&quot;&gt;
       &lt;/iframe&gt;
     </div>
   </div>
@@ -296,7 +296,7 @@
       title=&quot;playergenerated&quot;
       width=&quot;800&quot;
       height=&quot;200&quot;
-      src=&quot;https://benevolent-cocada-9b1164.netlify.app/minimal/{{paramToPlayer}}&quot;&gt;
+      src=&quot;https://player-radio-streaming.inovanex.com/minimal/{{paramToPlayer}}&quot;&gt;
       &lt;/iframe&gt;
     </div>
   </div>
@@ -311,6 +311,7 @@ import EditIcon from './icons/EditIcon.vue'
 import TrashIcon from './icons/TrashIcon.vue'
 import UpIcon from './icons/UpIcon.vue'
 import LeftIcon from './icons/LeftIcon.vue'
+
 
 export default {
   components:{
@@ -463,7 +464,7 @@ export default {
       oldStationName.value = stationName
       programmingInput.value = result.programming
       defaultImage.value = result.cover
-      window.scrollTo({top: 0, behavior: 'smooth'})
+      window.scrollTo({top: 2, left: 0, behavior: 'smooth'})
     }
 
     const confirmEditLink = (link) => {
